@@ -1,0 +1,14 @@
+# Output binaries
+/output/
+
+# OS and editor-specific files
+.DS_Store
+*.swp
+*.swo
+
+# Temporary files
+/tmp/
+configs_temp.h
+
+# Arduino CLI cache (optional)
+.arduino15/
