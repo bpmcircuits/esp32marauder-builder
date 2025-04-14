@@ -5,8 +5,11 @@ CONFIG_URL="https://raw.githubusercontent.com/justcallmekoko/ESP32Marauder/maste
 TMP_CONFIG="/tmp/configs_temp.h"
 
 if [[ "$1" == "clean" ]]; then
-  echo "🧹 Cleaning output/"
+  echo "🧹 Cleaning output/ folder and removing Docker build cache..."
   rm -rf output/*
+  docker-compose down
+  docker builder prune --all -f
+  exit 0
 fi
 
 echo "📥 Downloading board list..."
