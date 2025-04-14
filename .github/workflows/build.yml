@@ -61,4 +61,4 @@ jobs:
           GIST_SECRET: ${{ secrets.GIST_SECRET }}
         run: |
           gh auth login --with-token <<< "$GIST_SECRET"
-          gh gist edit "$GIST_ID" -f last_board.txt < last_board.txt
+          gh gist edit "$GIST_ID" -f last_board.txt < last_board.txt              
