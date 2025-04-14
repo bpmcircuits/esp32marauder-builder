@@ -10,56 +10,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ESP32_VERSION: "2.0.10"
+      ESP32_CHIP: "esp32s2"
+      MARAUDER_BOARD: "MARAUDER_FLIPPER"
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v3
-
-      - name: 📄 Download configs.h and select random board + chip
-        id: board
-        run: |
-          curl -s -o configs.h https://raw.githubusercontent.com/justcallmekoko/ESP32Marauder/master/esp32_marauder/configs.h
-
-          boards=$(awk '/\/\/\/ BOARD TARGETS/,/\/\/\/ END BOARD TARGETS/' configs.h | grep '^[[:space:]]*\/\/#define' | sed 's|.*//#define ||')
-          mapfile -t board_array <<< "$boards"
-          RANDOM_BOARD=${board_array[$((RANDOM % ${#board_array[@]}))]}
-
-          echo "✅ Selected board: $RANDOM_BOARD"
-
-          # Map to chip
-          declare -A board_chip_map=(
-            [MARAUDER_FLIPPER]="esp32s2"
-            [XIAO_ESP32_S3]="esp32s3"
-            [MARAUDER_REV_FEATHER]="esp32s3"
-          )
-
-          CHIP="${board_chip_map[$RANDOM_BOARD]}"
-          if [[ -z "$CHIP" ]]; then CHIP="esp32"; fi
-
-          echo "📦 Chip set to: $CHIP"
-
-          echo "MARAUDER_BOARD=$RANDOM_BOARD" >> $GITHUB_ENV
-          echo "ESP32_CHIP=$CHIP" >> $GITHUB_ENV
-          echo "$RANDOM_BOARD" > last_board.txt
-
-      - name: 💾 Save selected board as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: last-board
-          path: last_board.txt
 
       - name: 🐳 Set up Docker
         uses: docker/setup-buildx-action@v3
 
       - name: 📦 Build Docker image
-        env:
-          ESP32_VERSION: "2.0.10"
-          ESP32_CHIP: ${{ env.ESP32_CHIP }}
         run: docker compose build
 
       - name: 🚀 Run firmware build
-        env:
-          ESP32_VERSION: "2.0.10"
-          ESP32_CHIP: ${{ env.ESP32_CHIP }}
         run: docker compose up
 
       - name: 📦 Upload firmware artifacts
@@ -67,12 +33,3 @@ jobs:
         with:
           name: firmware-${{ env.MARAUDER_BOARD }}
           path: output/*.bin
-
-      - name: 🪄 Optional: Push last_board.txt to Gist
-        if: ${{ env.GIST_SECRET }}
-        env:
-          GIST_ID: aa68aaebc4b73cd93e3a70f42b9d9958
-          GIST_SECRET: ${{ secrets.GIST_SECRET }}
-        run: |
-          gh auth login --with-token <<< "$GIST_SECRET"
-          gh gist edit "$GIST_ID" -f last_board.txt < last_board.txt
