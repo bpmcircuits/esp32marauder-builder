@@ -1,26 +1,9 @@
-# ESP32Marauder Docker Builder
 
-This project provides a fully automated and reproducible Docker-based build environment for compiling the ESP32Marauder firmware with support for board selection, custom overrides, and versioned output binaries.
+# 🛠 ESP32Marauder Docker Builder
 
----
+This project provides a convenient Docker-based build system for compiling firmware from the [ESP32Marauder](https://github.com/justcallmekoko/ESP32Marauder) repository.
 
-## 🚀 Features
-
-- Interactive board selection with optional `CUSTOM_MANUAL` override
-- Automatic chip family detection based on board
-- Support for both platform libraries and Git-based libraries
-- Custom platform.txt overrides
-- Clean `output/` before build using `./build.sh clean`
-- Versioned output firmware based on `configs.h`
-- Docker Compose-based build with optional full cleanup
-
----
-
-## 📦 Prerequisites
-
-- Docker (tested with version **28.0.4**)
-- Git
-- Bash (Linux/macOS or WSL)
+It allows for fast selection of a supported board or using your own `CUSTOM_MANUAL` configuration.
 
 ---
 
@@ -41,14 +24,34 @@ This project provides a fully automated and reproducible Docker-based build envi
 
 ---
 
+## 🧩 Board selection
+
+The `build.sh` script automatically downloads the latest `configs.h` file from the upstream ESP32Marauder repository. It extracts supported board options from this file and lets you select one from an interactive list.
+
+You can also choose `CUSTOM_MANUAL` which:
+- Does not modify `configs.h`
+- Requires you to manually adjust the config and board definitions
+- Automatically applies overrides from the local `custom/` directory (if it exists)
+- Asks you to manually pick the ESP32 chip family (`esp32`, `esp32s2`, etc.)
+
+---
+
+## ⚙️ Configuration Files
+
+- `libs.txt`: Arduino libraries to install via `arduino-cli`
+- `libs_git.txt`: External libraries in the format `GIT_URL@VERSION`
+- `platform.txt`: Overrides the ESP32 platform settings during build
+
+---
+
 ## 🧹 Cleaning
 
-To clean up previous build artifacts:
+To clean the output directory before a new build, run:
 ```bash
 ./build.sh clean
 ```
 
-To fully reset Docker build cache:
+To clean Docker cache completely:
 ```bash
 docker-compose down
 docker builder prune --all
@@ -56,32 +59,36 @@ docker builder prune --all
 
 ---
 
-## ❗ Troubleshooting – Network Issues
+## 🐛 Troubleshooting
 
-If you see errors like:
+If the build fails due to internet/DNS errors when installing libraries (e.g. `i/o timeout`):
 ```
 Error installing LinkedList: dial tcp: lookup downloads.arduino.cc: i/o timeout
 ```
-
-It's likely due to networking/DNS issues inside the Docker container. To resolve:
-
+try cleaning and rebuilding
 ```bash
-docker-compose down
+./build.sh clean
 docker builder prune --all
 ./build.sh
 ```
 
 ---
 
-## ✅ Tested
+## ✅ Tested On
 
-- ✅ Board: `MARAUDER_FLIPPER`
-- ✅ Docker: `version 28.0.4`
-- ✅ Chip family: `esp32s2`
+- Docker version: `28.0.4`
+- Confirmed working board: `MARAUDER_FLIPPER` (ESP32-S2)
 
 ---
 
-## 🧪 Sample Build Output
+## 📄 TODO
+
+- Add ESP32 SPIFFS tool support
+- Test `CUSTOM_MANUAL` configuration in full
+
+---
+
+## 📋 Sample successful build log
 
 ```
 ./build.sh
@@ -136,8 +143,3 @@ esp32marauder_builder exited with code 0
 ```
 
 ---
-
-## 📋 TODO
-
-- [ ] Add ESP32 SPIFFS upload tool integration
-- [ ] Full support/test of `CUSTOM_MANUAL` mode
