@@ -24,7 +24,7 @@ jobs:
           ESP32_CHIP: esp32s2
           MARAUDER_BOARD: MARAUDER_FLIPPER
         run: |
-          docker-compose build \
+          docker compose build \
             --build-arg ESP32_VERSION=$ESP32_VERSION \
             --build-arg MARAUDER_BOARD=$MARAUDER_BOARD \
             --build-arg ESP32_CHIP=$ESP32_CHIP
