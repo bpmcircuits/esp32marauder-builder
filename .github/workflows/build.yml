@@ -2,29 +2,32 @@ name: Build ESP32Marauder firmware
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Docker Build Check
+
+    env:
+      ESP32_VERSION: "2.0.10"
+      ESP32_CHIP: "esp32s2"
+      MARAUDER_BOARD: "MARAUDER_FLIPPER"
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
+      - name: 🐳 Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      - name: Build container (simulate MARAUDER_FLIPPER)
-        env:
-          ESP32_VERSION: 2.0.10
-          ESP32_CHIP: esp32s2
-          MARAUDER_BOARD: MARAUDER_FLIPPER
-        run: |
-          docker compose build \
-            --build-arg ESP32_VERSION=$ESP32_VERSION \
-            --build-arg MARAUDER_BOARD=$MARAUDER_BOARD \
-            --build-arg ESP32_CHIP=$ESP32_CHIP
+      - name: 📦 Build Docker image
+        run: docker compose build
+
+      - name: 🚀 Run firmware build
+        run: docker compose up
+
+      - name: 📦 Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ env.MARAUDER_BOARD }}
+          path: output/*.bin
