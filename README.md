@@ -1,3 +1,5 @@
+![Docker Build Check](https://github.com/Nigdzie/esp32marauder-builder/actions/workflows/build.yml/badge.svg)
+
 # 🛠 ESP32Marauder Docker Builder
 
 This project provides a convenient Docker-based build system for compiling firmware from the [ESP32Marauder](https://github.com/justcallmekoko/ESP32Marauder) repository.
