@@ -1,5 +1,25 @@
-![Docker Build Check](https://github.com/Nigdzie/esp32marauder-builder/actions/workflows/build.yml/badge.svg)
+<p align="center">
+  <a href="https://github.com/Nigdzie/esp32marauder-builder/actions">
+    <img alt="Build Status" src="https://github.com/Nigdzie/esp32marauder-builder/actions/workflows/build.yml/badge.svg">
+  </a>
+  <a href="https://github.com/Nigdzie/esp32marauder-builder/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/Nigdzie/esp32marauder-builder">
+  </a>
+  <a href="https://github.com/Nigdzie/esp32marauder-builder/pulls">
+    <img alt="Pull Requests" src="https://img.shields.io/github/issues-pr/Nigdzie/esp32marauder-builder">
+  </a>
+  <a href="https://github.com/Nigdzie/esp32marauder-builder/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/Nigdzie/esp32marauder-builder">
+  </a>
+  <a href="https://github.com/Nigdzie/esp32marauder-builder">
+    <img alt="Repo Size" src="https://img.shields.io/github/repo-size/Nigdzie/esp32marauder-builder">
+  </a>
+  <a href="https://github.com/Nigdzie/esp32marauder-builder/commits/main">
+    <img alt="Last Commit" src="https://img.shields.io/github/last-commit/Nigdzie/esp32marauder-builder">
+  </a>
+</p>
 
+---
 # 🛠 ESP32Marauder Docker Builder
 
 This project provides a convenient Docker-based build system for compiling firmware from the [ESP32Marauder](https://github.com/justcallmekoko/ESP32Marauder) repository.
