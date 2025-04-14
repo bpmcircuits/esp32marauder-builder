@@ -5,9 +5,6 @@
   <a href="https://hits.sh/github.com/Nigdzie/esp32marauder-builder/">
     <img alt="Hits" src="https://hits.sh/github.com/Nigdzie/esp32marauder-builder.svg">
   </a>
-  <a href="https://github.com/Nigdzie/esp32marauder-builder">
-    <img alt="Last Tested Board" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Nigdzie/aa68aaebc4b73cd93e3a70f42b9d9958/raw/last_board.json">
-  </a>
   <a href="https://github.com/Nigdzie/esp32marauder-builder/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/Nigdzie/esp32marauder-builder">
   </a>
