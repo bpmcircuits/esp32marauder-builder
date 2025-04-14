@@ -19,7 +19,12 @@ RUN arduino-cli config init && \
     arduino-cli core install esp32:esp32@${ESP32_VERSION}
 
 COPY libs.txt /tmp/libs.txt
-RUN cat /tmp/libs.txt | xargs -I{} arduino-cli lib install "{}"
+RUN grep -v '^#' /tmp/libs.txt | grep -v '^\s*$' | while read lib; do \
+      echo "📦 Installing $lib..."; \
+      until arduino-cli lib install "$lib"; do \
+        echo "🔁 Retrying $lib in 5s..."; sleep 5; \
+      done; \
+    done
 
 COPY libs_git.txt /tmp/libs_git.txt
 RUN mkdir -p /root/Arduino/libraries && cd /root/Arduino/libraries && \
