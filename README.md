@@ -2,6 +2,11 @@
   <a href="https://github.com/Nigdzie/esp32marauder-builder/actions">
     <img alt="Build Status" src="https://github.com/Nigdzie/esp32marauder-builder/actions/workflows/build.yml/badge.svg">
   </a>
+  <img alt="Hits" src="https://hits.sh/github.com/Nigdzie/esp32marauder-builder.svg">
+  <img alt="Last Tested Board" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Nigdzie/last-board-gist-id/raw/last_board.json">
+
+  <br/>
+
   <a href="https://github.com/Nigdzie/esp32marauder-builder/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/Nigdzie/esp32marauder-builder">
   </a>
@@ -18,6 +23,7 @@
     <img alt="Last Commit" src="https://img.shields.io/github/last-commit/Nigdzie/esp32marauder-builder">
   </a>
 </p>
+
 
 ---
 # 🛠 ESP32Marauder Docker Builder
