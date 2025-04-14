@@ -69,7 +69,7 @@ jobs:
           path: output/*.bin
 
       - name: 🪄 Optional: Push last_board.txt to Gist
-        if: ${{ env.GIST_SECRET != '' }}
+        if: ${{ env.GIST_SECRET }}
         env:
           GIST_ID: aa68aaebc4b73cd93e3a70f42b9d9958
           GIST_SECRET: ${{ secrets.GIST_SECRET }}
