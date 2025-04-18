@@ -1,46 +1,41 @@
-name: 🧪 Test Custom Board Build
+name: 🧪 Build All Custom Boards
 
 on:
   workflow_dispatch:
-    inputs:
-      board:
-        description: "Board name (must match folder in custom_boards/)"
-        required: true
-        default: "BPMCIRCUITS_FEBERIS"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        board: [BPMCIRCUITS_FEBERIS, BPMCIRCUITS_FEBERIS_PRO]
+
     env:
       ESP32_VERSION: 2.0.10
-      MARAUDER_BOARD: ${{ github.event.inputs.board }}
       IS_CUSTOM_AUTO: "true"
+      MARAUDER_BOARD: ${{ matrix.board }}
 
     steps:
-      - name: ⬇️ Checkout Repository
+      - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: 🧱 Set up Docker Buildx
+      - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: 🐳 Build with Docker Compose
+      - name: 🛠 Build firmware for ${{ matrix.board }}
         run: |
-          echo "🏗️ Building for board: $MARAUDER_BOARD"
+          echo "📦 Building for board: $MARAUDER_BOARD"
           docker compose build \
             --build-arg ESP32_VERSION=$ESP32_VERSION \
+            --build-arg ESP32_CHIP=$(cat custom_boards/${MARAUDER_BOARD}/chip.txt) \
             --build-arg MARAUDER_BOARD=$MARAUDER_BOARD \
             --build-arg IS_CUSTOM_AUTO=$IS_CUSTOM_AUTO
 
-      - name: ▶️ Run Container and Build Firmware
-        run: |
-          docker compose up --abort-on-container-exit
+          docker compose up
 
-      - name: 📤 Upload Firmware Artifacts
+      - name: 📤 Upload output files
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-${{ github.event.inputs.board }}
+          name: firmware_${{ matrix.board }}
           path: output/*.bin
-          if-no-files-found: error
-
-      - name: 📋 List Output Files
-        run: ls -l output
