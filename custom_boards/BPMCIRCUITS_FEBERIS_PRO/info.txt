@@ -1,0 +1,4 @@
+Info: BPMCIRCUITS_FEBERIS_PRO
+Project URL: https://github.com/bpmcircuits/ESP32Marauder_FEBERIS
+Description: Supporting as well https://github.com/bpmcircuits/ESP32Marauder_NetNinja
+
