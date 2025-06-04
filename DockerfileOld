@@ -9,9 +9,26 @@ ENV PATH="/root/bin:$PATH"
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update && apt-get install -y \
-    curl unzip git xz-utils python3 python3-pip \
-    gcc make jq sed && rm -rf /var/lib/apt/lists/*
+
+# 1) Install ubuntu-keyring, ca-certificates, and HTTPS transport
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      ubuntu-keyring \
+      ca-certificates \
+      apt-transport-https \
+ && rm -rf /var/lib/apt/lists/*
+
+# 2) Switch all APT sources to HTTPS (optional but recommended)
+RUN sed -i \
+    -e 's|http://archive.ubuntu.com/ubuntu/|https://archive.ubuntu.com/ubuntu/|g' \
+    -e 's|http://security.ubuntu.com/ubuntu/|https://security.ubuntu.com/ubuntu/|g' \
+    /etc/apt/sources.list
+
+# 3) Now you can update & install locales (or any other package):
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends locales \
+ && rm -rf /var/lib/apt/lists/* \
+ && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 
@@ -56,45 +73,22 @@ RUN mkdir -p /root/Arduino/libraries && cd /root/Arduino/libraries && \
 
 RUN pip3 install pyserial
 
-RUN set -ex && \
-    rm -rf /project/ESP32Marauder && \
-    mkdir -p /project && \
-    echo "Cloning ESP32Marauder repository..." && \
-    git clone --depth=1 https://github.com/justcallmekoko/ESP32Marauder.git /project/ESP32Marauder || { echo "Git clone failed!"; exit 1; } && \
+RUN rm -rf /project/ESP32Marauder && \
+    git clone --depth=1 https://github.com/justcallmekoko/ESP32Marauder.git /project/ESP32Marauder && \
     if [[ "$MARAUDER_BOARD" != "CUSTOM_MANUAL" ]]; then \
       echo "🧠 Enabling board macro: $MARAUDER_BOARD"; \
-      ls -la /project/ESP32Marauder/esp32_marauder/ || { echo "Directory listing failed!"; exit 1; } && \
-      sed -i "s|//#define ${MARAUDER_BOARD}|#define ${MARAUDER_BOARD}|" /project/ESP32Marauder/esp32_marauder/configs.h || { echo "Sed command failed!"; exit 1; }; \
+      sed -i "s|//#define ${MARAUDER_BOARD}|#define ${MARAUDER_BOARD}|" /project/ESP32Marauder/esp32_marauder/configs.h; \
     else \
       echo "📂 Copying manual overrides..."; \
       cp -r /project/custom/* /project/ESP32Marauder/esp32_marauder/; \
     fi
 
-RUN set -ex && \
-    if [[ "$IS_CUSTOM_AUTO" == "true" ]]; then \
-      echo "🚀 Running inject.py for $MARAUDER_BOARD" && \
+RUN if [[ "$IS_CUSTOM_AUTO" == "true" ]]; then \
+      echo "🚀 Running inject.py for $MARAUDER_BOARD"; \
       mkdir -p /project/output && \
-      echo "📂 Checking directory structure:" && \
-      ls -la /project/ && \
-      echo "📂 Checking ESP32Marauder directory:" && \
-      ls -la /project/ESP32Marauder/ && \
-      echo "📂 Checking esp32_marauder directory:" && \
-      ls -la /project/ESP32Marauder/esp32_marauder/ && \
-      echo "📂 Checking custom boards directory:" && \
-      ls -la /tmp/custom_boards/$MARAUDER_BOARD/ && \
-      echo "📄 Checking inject.py:" && \
-      cat /tmp/custom_boards/$MARAUDER_BOARD/inject.py | head -n 50 && \
-      echo "📄 Checking configs.h exists:" && \
-      ls -la /project/ESP32Marauder/esp32_marauder/configs.h || echo "⚠️ configs.h not found!" && \
-      echo "📄 Checking WiFiScan.cpp exists:" && \
-      ls -la /project/ESP32Marauder/esp32_marauder/WiFiScan.cpp || echo "⚠️ WiFiScan.cpp not found!" && \
-      echo "🚀 Executing inject.py:" && \
-      python3 /tmp/custom_boards/$MARAUDER_BOARD/inject.py --all > /project/output/inject.log 2>&1 || { \
-        echo "❌ inject.py failed. Showing error log:" && \
-        cat /project/output/inject.log && \
-        exit 1; \
-      } && \
-      echo "✅ Injection completed successfully"; \
+      set -e && \
+      python3 /tmp/custom_boards/$MARAUDER_BOARD/inject.py --all > /project/output/inject.log 2>&1 && \
+      cat /project/output/inject.log; \
     else \
       echo "🧘 Skipping inject.py – IS_CUSTOM_AUTO != true"; \
     fi

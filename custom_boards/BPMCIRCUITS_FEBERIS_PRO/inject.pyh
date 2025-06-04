@@ -21,6 +21,7 @@ def patch_configs_h():
         "hardware_name": False,
         "board_features": False,
         "mem_limit": False,
+        "html_limit": False,
         "gps_stuff": False
     }
 
@@ -87,6 +88,7 @@ def patch_configs_h():
     log("✅ configs.h: inserted targets =", inserted['board_targets'],
     ", features =", inserted['board_features'],
     ", mem_limit =", inserted['mem_limit'],
+    ", html_limit =", inserted['html_limit'],
     ", gps =", inserted['gps_stuff'])
 
 def validate_configs_h():
@@ -95,6 +97,7 @@ def validate_configs_h():
         "#define BPMCIRCUITS_FEBERIS",
         '#elif defined(BPMCIRCUITS_FEBERIS)',
         '#define HARDWARE_NAME "BPM Circuits FEBERIS"',
+        "#define MAX_HTML_SIZE 20000",
         "#define MEM_LOWER_LIM 10000",
         "#define GPS_SERIAL_INDEX 2",
     ]
