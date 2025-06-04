@@ -21,7 +21,6 @@ def patch_configs_h():
         "hardware_name": False,
         "board_features": False,
         "mem_limit": False,
-        "html_limit": False,
     }
 
     for i, line in enumerate(lines):
@@ -68,10 +67,6 @@ def patch_configs_h():
             new_lines.append('  #elif defined(BPMCIRCUITS_FEBERIS)\n')
             new_lines.append('    #define MEM_LOWER_LIM 10000\n')
             inserted["mem_limit"] = True
-        elif in_block == "html_limit" and "#elif defined(MARAUDER_DEV_BOARD_PRO)" in line and not inserted["html_limit"]:
-            new_lines.append('  #elif defined(BPMCIRCUITS_FEBERIS)\n')
-            new_lines.append('    #define MAX_HTML_SIZE 20000\n')
-            inserted["html_limit"] = True
 
         new_lines.append(line)
 
@@ -81,8 +76,7 @@ def patch_configs_h():
     log("✅ configs.h patched successfully.")
     log("✅ configs.h: inserted targets =", inserted['board_targets'],
     ", features =", inserted['board_features'],
-    ", mem_limit =", inserted['mem_limit'],
-    ", html_limit =", inserted['html_limit'])
+    ", mem_limit =", inserted['mem_limit'])
 
 def validate_configs_h():
     log("🔍 Validating configs.h...")
@@ -90,7 +84,6 @@ def validate_configs_h():
         "#define BPMCIRCUITS_FEBERIS",
         '#elif defined(BPMCIRCUITS_FEBERIS)',
         '#define HARDWARE_NAME "BPM Circuits FEBERIS"',
-        "#define MAX_HTML_SIZE 20000",
         "#define MEM_LOWER_LIM 10000",
     ]
 
